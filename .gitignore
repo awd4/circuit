@@ -1,0 +1,9 @@
+*.swp
+*.pyd
+*.pyo
+*.pyc
+*.png
+*.jpg
+*.bmp
+*.so
+*.dll
