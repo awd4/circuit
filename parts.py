@@ -2,18 +2,13 @@
 CHARGES_PER_VOLT = 100.0
 
 
-class Circuit:
-    def __init__(self):
-        self.parts = []
-        self.nodes = []
-        self.charges = []
-
-
 class Battery:
     def __init__(self):
         self.neg = None
         self.pos = None
         self.charges = None
+    def nodes(self):
+        return [self.neg, self.pos]
     def move_charges(self, old_charges, new_charges):
         n, p = self.neg, self.pos
         new_charges[p] = old_charges[n] + self.charges
@@ -24,6 +19,8 @@ class Resistor:
         self.n1 = None
         self.n2 = None
         self.ohms = None
+    def nodes(self):
+        return [self.n1, self.n2]
     def move_charges(self, old_charges, new_charges):
         n1, n2 = self.n1, self.n2
         c1 = old_charges[n1]
@@ -41,6 +38,8 @@ class Capacitor:
         self.n2 = None
         self.capacitance = None
         self.charges = 0.0
+    def nodes(self):
+        return [self.n1, self.n2]
     def move_charges(self, old_charges, new_charges):
         n1, n2 = self.n1, self.n2
         c1 = old_charges[n1]
