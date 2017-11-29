@@ -14,7 +14,7 @@ def br():
     return ct
 
 
-def vd():
+def vdiv():
     ct = circuit.Circuit()
     ct.parts = [
             parts.make_battery(0, 1, 5),
@@ -34,6 +34,16 @@ def brc():
     return ct
 
 
+def brd():
+    ct = circuit.Circuit()
+    ct.parts = [
+            parts.make_battery(0, 1, 5),
+            parts.make_resistor(1, 2, 5),
+            parts.make_diode(2, 0, 0.7),
+            ]
+    return ct
+
+
 if __name__ == '__main__':
     import sys
 
@@ -42,10 +52,12 @@ if __name__ == '__main__':
 
     if sys.argv[1].lower() == 'br':
         ct = br()
-    elif sys.argv[1].lower() == 'vd':
-        ct = vd()
+    elif sys.argv[1].lower() == 'vdiv':
+        ct = vdiv()
     elif sys.argv[1].lower() == 'brc':
         ct = brc()
+    elif sys.argv[1].lower() == 'brd':
+        ct = brd()
 
     circuit.initialize(ct)
 

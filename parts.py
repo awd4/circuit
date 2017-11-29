@@ -6,12 +6,12 @@ class Battery:
     def __init__(self):
         self.neg = None
         self.pos = None
-        self.charges = None
+        self.volts = None
     def nodes(self):
         return [self.neg, self.pos]
     def move_charges(self, old_charges, new_charges):
         n, p = self.neg, self.pos
-        new_charges[p] = old_charges[n] + self.charges
+        new_charges[p] = old_charges[n] + self.volts * CHARGES_PER_VOLT
 
 
 class Resistor:
@@ -50,9 +50,26 @@ class Capacitor:
         self.charges += c_diff
 
 
+class Diode:
+    def __init__(self):
+        self.anode = None
+        self.cathode = None
+        self.bias = None
+    def nodes(self):
+        return [self.anode, self.cathode]
+    def move_charges(self, old_charges, new_charges):
+        a, c = self.anode, self.cathode
+        c1 = old_charges[a]
+        c2 = old_charges[c]
+        c_diff = c1 - c2 - CHARGES_PER_VOLT * self.bias
+        if c_diff > 0.0:
+            new_charges[a] -= c_diff
+            new_charges[c] += c_diff
+
+
 def make_battery(neg_node, pos_node, volts):
     b = Battery()
-    b.charges = CHARGES_PER_VOLT * volts
+    b.volts = volts
     b.neg = neg_node
     b.pos = pos_node
     return b
@@ -72,5 +89,13 @@ def make_capacitor(a_node, b_node, capacitance):
     c.n2 = b_node
     c.capacitance = capacitance
     return c
+
+
+def make_diode(anode, cathode, bias=0.7):
+    d = Diode()
+    d.anode = anode
+    d.cathode = cathode
+    d.bias = bias
+    return d
 
 
