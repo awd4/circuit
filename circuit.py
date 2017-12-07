@@ -16,18 +16,28 @@ def initialize(circuit):
 def simulate(circuit, steps=50):
     ct = circuit
  
-    hist = [ct.charges.copy()]
+    hist = [ct.charges.copy() - ct.charges[0]]
 
     for t in range(steps):
-        new_charges = ct.charges.copy()
 
-        for p in ct.parts:
-            p.move_charges(ct.charges, new_charges)
-        new_charges[0] = 0.0    # set the ground (hmmm...)
+        c1 = ct.charges.copy()
+        c2 = c1.copy()
 
-        ct.charges = new_charges
+        N = 8
+        for i in range(N):
 
-        hist.append(ct.charges)
+            for p in ct.parts:
+                p.move_charges(c1, c2)
+
+            diff = c2 - c1
+            c2 = c1 + diff / N
+
+            c1 = c2
+            c2 = c1.copy()
+
+        ct.charges = c2
+
+        hist.append(ct.charges - ct.charges[0])
 
     return np.array(hist)
 

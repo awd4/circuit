@@ -8,8 +8,18 @@ import circuit
 def br():
     ct = circuit.Circuit()
     ct.parts = [
+            parts.make_battery(0, 1, 10),
+            parts.make_resistor(1, 0, 10),
+            ]
+    return ct
+
+
+def bbr():
+    ct = circuit.Circuit()
+    ct.parts = [
             parts.make_battery(0, 1, 5),
-            parts.make_resistor(1, 0, 5),
+            parts.make_battery(1, 2, 5),
+            parts.make_resistor(2, 0, 10),
             ]
     return ct
 
@@ -52,6 +62,8 @@ if __name__ == '__main__':
 
     if sys.argv[1].lower() == 'br':
         ct = br()
+    elif sys.argv[1].lower() == 'bbr':
+        ct = bbr()
     elif sys.argv[1].lower() == 'vdiv':
         ct = vdiv()
     elif sys.argv[1].lower() == 'brc':
