@@ -7,7 +7,7 @@ class Battery:
         self.neg = None
         self.pos = None
         self.volts = None
-        self.internal_resistance = 1.0
+        self.internal_resistance = 0.1
         self.current = 5.0
     def nodes(self):
         return [self.neg, self.pos]
@@ -16,41 +16,13 @@ class Battery:
         goal = self.volts * CHARGES_PER_VOLT
         curr = old[p] - old[n]
 
-        # method 1
-        if False:
-            new[p] = old[n] + goal
-
-        # method 2
-        if False:
-            jump = min(2 * old[n], goal - curr) / 2.0
-            add = max(0, goal - curr - 2 * jump)
-            new[n] -= jump
-            new[p] += jump
-            new[p] += 2.0*add
-
-        # method 3
-        if False:
-            current = self.current
-            if curr < goal:
-                current += 2.0
-            elif curr > goal:
-                current -= 2.0
-            jump = min(2 * old[n], current) / 2.0
-            add = max(0, current - 2 * jump)
-            new[n] -= jump
-            new[p] += jump
-            new[p] += add
-            self.current = current
-
-        # method 4
-        if True:
-            diff = goal - curr
-            I = diff / 0.1 #self.internal_resistance
-            jump = max(0, min(I, old[n]))
-            add = max(0, I - jump)
-            new[n] -= jump
-            new[p] += jump
-            new[p] += add
+        diff = goal - curr
+        I = diff / self.internal_resistance
+        jump = max(0, min(I, old[n]))
+        add = max(0, I - jump)
+        new[n] -= jump
+        new[p] += jump
+        new[p] += add
 
 
 class Resistor:
@@ -94,6 +66,7 @@ class Diode:
         self.anode = None
         self.cathode = None
         self.bias = None
+        self.effective_resistance = 0.1
     def nodes(self):
         return [self.anode, self.cathode]
     def move_charges(self, old_charges, new_charges):
@@ -102,8 +75,9 @@ class Diode:
         c2 = old_charges[c]
         c_diff = c1 - c2 - CHARGES_PER_VOLT * self.bias
         if c_diff > 0.0:
-            new_charges[a] -= c_diff
-            new_charges[c] += c_diff
+            I = c_diff / self.effective_resistance
+            new_charges[a] -= I
+            new_charges[c] += I
 
 
 def make_battery(neg_node, pos_node, volts):
