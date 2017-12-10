@@ -80,6 +80,63 @@ class Diode:
             new_charges[c] += I
 
 
+class NPN:
+    def __init__(self):
+        self.collector = None
+        self.base = None
+        self.emitter = None
+        self.effective_resistance = 0.1
+    def nodes(self):
+        return [self.collector, self.base, self.emitter]
+    def move_charges(self, old_charges, new_charges):
+        old, new = old_charges, new_charges
+        c, b, e = self.collector, self.base, self.emitter
+        vc, vb, ve = old[c], old[b], old[e]
+        c_diff = vc - ve
+        if vc <= ve:
+            return
+        if vb < ve:
+            return
+        if vb > vc:
+            print('sat')
+            I = c_diff / self.effective_resistance
+            new[c] -= I
+            new[e] += I
+        else:
+            I = c_diff / (self.effective_resistance + (vc - vb) * 0.1)
+            new[c] -= I
+            new[e] += I
+
+
+class PNP:
+    def __init__(self):
+        self.emitter = None
+        self.base = None
+        self.collector = None
+        self.effective_resistance = 0.1
+    def nodes(self):
+        return [self.emitter, self.base, self.collector]
+    def move_charges(self, old_charges, new_charges):
+        old, new = old_charges, new_charges
+        e, b, c = self.emitter, self.base, self.collector
+        ve, vb, vc = old[e], old[b], old[c]
+        c_diff = ve - vc
+        if ve <= vc:
+            return
+        if vb < vc:
+            return
+        if vb > ve:
+            I = c_diff / self.effective_resistance
+            new[e] -= I
+            new[c] += I
+        else:
+            I = c_diff / (self.effective_resistance + (ve - vb) * 0.1)
+            new[e] -= I
+            new[c] += I
+
+
+
+
 def make_battery(neg_node, pos_node, volts):
     b = Battery()
     b.volts = volts
@@ -110,5 +167,21 @@ def make_diode(anode, cathode, bias=0.7):
     d.cathode = cathode
     d.bias = bias
     return d
+
+
+def make_npn(collector, base, emitter):
+    t = NPN()
+    t.collector = collector
+    t.base = base
+    t.emitter = emitter
+    return t
+
+
+def make_pnp(emitter, base, collector):
+    t = PNP()
+    t.emitter = emitter
+    t.base = base
+    t.collector = collector
+    return t
 
 

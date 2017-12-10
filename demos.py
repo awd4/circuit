@@ -74,6 +74,43 @@ def rgrid():
     return ct
 
 
+def npn():
+    ct = circuit.Circuit()
+    ct.parts = [
+            parts.make_battery(0, 1, 5),
+            parts.make_resistor(1, 2, 5),
+            parts.make_resistor(1, 3, 10),
+            parts.make_resistor(3, 0, 8.9),
+            parts.make_npn(2, 3, 0),
+            ]
+    return ct
+
+
+def pnp():
+    ct = circuit.Circuit()
+    ct.parts = [
+            parts.make_battery(0, 1, 5),
+            parts.make_pnp(1, 2, 3),
+            parts.make_resistor(1, 2, 1),
+            parts.make_resistor(2, 0, 20),
+            parts.make_resistor(3, 0, 5),
+            ]
+    return ct
+
+
+def and_gate():
+    ct = circuit.Circuit()
+    ct.parts = [
+            parts.make_battery(0, 1, 5),
+            parts.make_battery(0, 2, 5),    # A
+            parts.make_battery(0, 3, 5),    # B
+            parts.make_npn(1, 2, 4),
+            parts.make_npn(4, 3, 5),
+            parts.make_resistor(5, 0, 20),  # Node 5 = A & B
+            ]
+    return ct
+
+
 if __name__ == '__main__':
     import sys
 
@@ -92,12 +129,18 @@ if __name__ == '__main__':
         ct = brd()
     elif sys.argv[1].lower() == 'rgrid':
         ct = rgrid()
+    elif sys.argv[1].lower() == 'npn':
+        ct = npn()
+    elif sys.argv[1].lower() == 'pnp':
+        ct = pnp()
+    elif sys.argv[1].lower() == 'and-gate':
+        ct = and_gate()
 
     circuit.initialize(ct)
 
-    hist = circuit.simulate(ct)
+    hist = circuit.simulate(ct, steps=400)
 
-    plt.plot(hist)
+    plt.plot(hist[:,1:])
     plt.show()
 
 
